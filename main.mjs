@@ -6,10 +6,23 @@ const config = {
 }
 
 class Render{
-    static changeToLeadAsyncSelectorOptionsByObjectsArray(eventId,argumentArr){
+    static changeToLeadAsyncSelectorOptionsByObjectsArray(id,argumentArr){
 
-        document.getElementById(eventId).addEventListener("change" ,()=> View.AsyncSelectorOptionsByObjectsArray(...argumentArr) )
+        document.getElementById(id).addEventListener("change" ,()=> View.AsyncSelectorOptionsByObjectsArray(...argumentArr) )
 
+    }
+    static changeToFilterSelectorOptionByApiData(id,argumentArr){
+
+        document.getElementById(id).addEventListener("change",()=> SelectorOptionDirector.filteredSelectorOptionByApiData(...argumentArr))
+
+    }
+
+    static changeTolog(id){
+        document.getElementById(id).addEventListener("change", ()=> {
+            let value = document.getElementById(id).value
+            console.log(document.getElementById(id).value)
+            console.log(document.getElementById(id).options[document.getElementById(id).selectedIndex].text)
+        })
     }
 }
 class ViewTemplate{
@@ -121,28 +134,33 @@ class View{
         //selector内のoptionをセット。
         //テンプレートリテラル内でセットしたかったけど非同期だと無理だった。。
         //第一引数がセットしてるselectorのid
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step1-brand",config.url + "?type=cpu","Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step1-brand",config.url + "?type=cpu","Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step1-model",config.url + "?type=cpu","Model");
+        SelectorOptionDirector.simpleSelectorOptionByApiData("step1-brand", `${config.url}?type=cpu`, "Brand");
+        SelectorOptionDirector.simpleSelectorOptionByApiData("step1-model", `${config.url}?type=cpu`, "Model");
 
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step2-brand",config.url + "?type=gpu","Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step2-model",config.url + "?type=gpu","Model");
+        SelectorOptionDirector.simpleSelectorOptionByApiData("step2-brand", `${config.url}?type=gpu`, "Brand");
+        SelectorOptionDirector.simpleSelectorOptionByApiData("step2-model", `${config.url}?type=gpu`, "Model");
 
         SelectorOptionDirector.simpleSelectorOptionByArray("step3-how-many?",[1,2,3,4]);
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step3-brand",config.url + "?type=ram","Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step3-model",config.url + "?type=ram","Model");
+        SelectorOptionDirector.simpleSelectorOptionByApiData("step3-brand", `${config.url}?type=ram`, "Brand");
+        SelectorOptionDirector.simpleSelectorOptionByApiData("step3-model", `${config.url}?type=ram`, "Model");
 
 
-        SelectorOptionDirector.simpleSelectorOptionByArray("step4-hdd-or-ssd",["HHD","SSD"]);
-        SelectorOptionDirector.simpleSelectorOptionByArray("step4-strage",["4TB","2TB","1TB","960GB","800GB","512GB","500GB","480GB","400GB","280GB","256GB","250GB","128GB","118GB","58GB"]);
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step4-brand",config.url + "?type=gpu","Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step4-model",config.url + "?type=gpu","Model");
+        SelectorOptionDirector.simpleSelectorOptionByArray("step4-hdd-or-ssd", ["HHD","SSD"]);
+        SelectorOptionDirector.simpleSelectorOptionByArray("step4-strage", ["4TB","2TB","1TB","960GB","800GB","512GB","500GB","480GB","400GB","280GB","256GB","250GB","128GB","118GB","58GB"]);
+        SelectorOptionDirector.simpleSelectorOptionByApiData("step4-brand", `${config.url}?type=gpu`, "Brand");
+        SelectorOptionDirector.simpleSelectorOptionByApiData("step4-model", `${config.url}?type=gpu`, "Model");
 
 
 
         ///Event
-        Render.changeToLeadAsyncSelectorOptionsByObjectsArray("step1-brand",["step1-model",config.url + "?type=cpu","Model"])
-
+        let textOf = (id)=>{
+            let select = document.getElementById(id);
+            return select.options[select.selectedIndex].text;
+        }
+        Render.changeToFilterSelectorOptionByApiData("step1-brand",["step1-model", `${config.url}?type=cpu`, "Model", (cur)=> cur["Brand"] == textOf("step1-brand") ])
+        //addEventLisnterで必要なこと
+        //Brandを選んだらModelをBrandのデータに基づいてfilterする。
+        Render.changeTolog("step1-brand")
         
     }
 
