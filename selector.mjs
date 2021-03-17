@@ -88,6 +88,7 @@ class SelectorDirector{
         return new SelectorOption(selectorId,iterable).mapByValues((cur)=> cur[dataKey]).uniquify().adjust().build();
 
     }
+    //非同期用
     static simpleSelectorByApiData(selectorId, url, dataKey){
 
         fetch(url).then(res => res.json()).then(iterable => this.simpleSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey));
@@ -108,6 +109,7 @@ class SelectorOptionDirector{
 
         new SelectorOption(selectorId,iterable).filter(f).mapByValues((cur)=> cur[dataKey]).uniquify().adjust().buildAtId();
     }
+    //非同期用
     static simpleSelectorOptionByApiData(selectorId, url, dataKey){
         
         fetch(url).then(res => res.json()).then(iterable => this.simpleSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey));

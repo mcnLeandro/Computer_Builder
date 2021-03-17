@@ -4,6 +4,27 @@ import { SelectorOption,SelectorOptionDirector } from '/selector.mjs';
 const config = {
     url : "https://api.recursionist.io/builder/computers"
 }
+const id = {
+    step1:{
+        brand:"step1-brand",
+        model:"step1-model"
+    },
+    step2:{
+        brand:"step2-brand",
+        model:"step2-model"
+    },
+    step3:{
+        howMany:"step3-how-many?",
+        brand:"step3-brand",
+        model:"step3-model"
+    },
+    step4:{
+        sshOrHdd:"step4-hdd-or-ssd",
+        strage:"step4-strage",
+        brand:"step4-brand",
+        mdel:"step4-model"
+    }
+}
 
 class Render{
     static changeToLeadAsyncSelectorOptionsByObjectsArray(id,argumentArr){
@@ -19,9 +40,7 @@ class Render{
 
     static changeTolog(id){
         document.getElementById(id).addEventListener("change", ()=> {
-            let value = document.getElementById(id).value
-            console.log(document.getElementById(id).value)
-            console.log(document.getElementById(id).options[document.getElementById(id).selectedIndex].text)
+            // do something to debug
         })
     }
 }
@@ -80,47 +99,47 @@ class View{
                 ${ViewTemplate.h2("step1 : Select your CPU")}
 
                 ${ViewTemplate.h3("Brand")}
-                ${ViewTemplate.selector("step1-brand")}
+                ${ViewTemplate.selector(id.step1.brand)}
                 
                 ${ViewTemplate.h3("Model")}
-                ${ViewTemplate.selector("step1-model")}
+                ${ViewTemplate.selector(id.step1.model)}
 
                 <!-- Step2 -->
                 ${ViewTemplate.h2("step2 : Select your GPU")}
 
                 ${ViewTemplate.h3("Brand")}
-                ${ViewTemplate.selector("step2-brand")}
+                ${ViewTemplate.selector(id.step2.brand)}
 
                 ${ViewTemplate.h3("Model")}
-                ${ViewTemplate.selector("step2-model")}
+                ${ViewTemplate.selector(id.step2.model)}
 
                 <!-- Step3 -->
                 ${ViewTemplate.h2("step3 : Select your memory card")}
 
                 ${ViewTemplate.h3("How Many?")}
-                ${ViewTemplate.selector("step3-how-many?")}
+                ${ViewTemplate.selector(id.step3.howMany)}
 
                 ${ViewTemplate.h3("Brand")}
-                ${ViewTemplate.selector("step3-brand")}
+                ${ViewTemplate.selector(id.step3.brand)}
 
                 ${ViewTemplate.h3("Model")}
-                ${ViewTemplate.selector("step3-model")}
+                ${ViewTemplate.selector(id.step3.model)}
 
 
                 <!-- Step4 -->
                 ${ViewTemplate.h2("step4 : Select your storage")}
 
                 ${ViewTemplate.h3("HDD or SSD")}
-                ${ViewTemplate.selector("step4-hdd-or-ssd")}
+                ${ViewTemplate.selector(id.step4.sshOrHdd)}
 
                 ${ViewTemplate.h3("Storage")}
-                ${ViewTemplate.selector("step4-strage")}
+                ${ViewTemplate.selector(id.step4.strage)}
 
                 ${ViewTemplate.h3("Brand")}
-                ${ViewTemplate.selector("step4-brand")}
+                ${ViewTemplate.selector(id.step4.brand)}
 
                 ${ViewTemplate.h3("Model")}
-                ${ViewTemplate.selector("step4-model")}
+                ${ViewTemplate.selector(id.step4.model)}
 
 
 
@@ -134,21 +153,21 @@ class View{
         //selector内のoptionをセット。
         //テンプレートリテラル内でセットしたかったけど非同期だと無理だった。。
         //第一引数がセットしてるselectorのid
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step1-brand", `${config.url}?type=cpu`, "Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step1-model", `${config.url}?type=cpu`, "Model");
+        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step1.brand, `${config.url}?type=cpu`, "Brand");
+        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step1.model, `${config.url}?type=cpu`, "Model");
 
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step2-brand", `${config.url}?type=gpu`, "Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step2-model", `${config.url}?type=gpu`, "Model");
+        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step2.brand, `${config.url}?type=gpu`, "Brand");
+        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step2.model, `${config.url}?type=gpu`, "Model");
 
-        SelectorOptionDirector.simpleSelectorOptionByArray("step3-how-many?",[1,2,3,4]);
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step3-brand", `${config.url}?type=ram`, "Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step3-model", `${config.url}?type=ram`, "Model");
+        SelectorOptionDirector.simpleSelectorOptionByArray(id.step3.howMany,[1,2,3,4]);
+        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step3.brand, `${config.url}?type=ram`, "Brand");
+        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step3.model, `${config.url}?type=ram`, "Model");
 
 
-        SelectorOptionDirector.simpleSelectorOptionByArray("step4-hdd-or-ssd", ["HHD","SSD"]);
-        SelectorOptionDirector.simpleSelectorOptionByArray("step4-strage", ["4TB","2TB","1TB","960GB","800GB","512GB","500GB","480GB","400GB","280GB","256GB","250GB","128GB","118GB","58GB"]);
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step4-brand", `${config.url}?type=gpu`, "Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData("step4-model", `${config.url}?type=gpu`, "Model");
+        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.sshOrHdd, ["HHD","SSD"]);
+        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.strage, ["4TB","2TB","1TB","960GB","800GB","512GB","500GB","480GB","400GB","280GB","256GB","250GB","128GB","118GB","58GB"]);
+        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.brand, []);
+        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.model, []);
 
 
 
@@ -157,10 +176,8 @@ class View{
             let select = document.getElementById(id);
             return select.options[select.selectedIndex].text;
         }
-        Render.changeToFilterSelectorOptionByApiData("step1-brand",["step1-model", `${config.url}?type=cpu`, "Model", (cur)=> cur["Brand"] == textOf("step1-brand") ])
-        //addEventLisnterで必要なこと
-        //Brandを選んだらModelをBrandのデータに基づいてfilterする。
-        Render.changeTolog("step1-brand")
+        Render.changeToFilterSelectorOptionByApiData(id.step1.brand,[id.step1.model, `${config.url}?type=cpu`, "Model", (cur)=> cur["Brand"] == textOf(id.step1.brand) ])
+        
         
     }
 
