@@ -104,10 +104,17 @@ class SelectorOptionDirector{
         new SelectorOption(selectorId,iterable).mapByValues((cur)=> cur[dataKey]).uniquify().adjust().buildAtId();
 
     }
+    static filteredSelectorOptionByArrayOfObject(selectorId, iterable, dataKey,f){
+
+        new SelectorOption(selectorId,iterable).filter(f).mapByValues((cur)=> cur[dataKey]).uniquify().adjust().buildAtId();
+    }
     static simpleSelectorOptionByApiData(selectorId, url, dataKey){
-
+        
         fetch(url).then(res => res.json()).then(iterable => this.simpleSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey));
-
+        
+    }
+    static filteredSelectorOptionByApiData(selectorId, url, dataKey,f){
+        fetch(url).then(res => res.json()).then(iterable => this.filteredSelectorOptionByArrayOfObject(selectorId,iterable,dataKey,f));
     }
 }
 
