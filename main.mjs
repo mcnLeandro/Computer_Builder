@@ -150,9 +150,10 @@ class View{
             </section>
 
         `
-        //selector内のoptionをセット。
+        //============================
+        //selector内のoptionをセット
+        //============================
         //テンプレートリテラル内でセットしたかったけど非同期だと無理だった。。
-        //第一引数がセットしてるselectorのid
         SelectorOptionDirector.simpleSelectorOptionByApiData(id.step1.brand, `${config.url}?type=cpu`, "Brand");
         SelectorOptionDirector.simpleSelectorOptionByApiData(id.step1.model, `${config.url}?type=cpu`, "Model");
 
@@ -166,17 +167,25 @@ class View{
 
         SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.sshOrHdd, ["HHD","SSD"]);
         SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.strage, ["4TB","2TB","1TB","960GB","800GB","512GB","500GB","480GB","400GB","280GB","256GB","250GB","128GB","118GB","58GB"]);
-        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.brand, []);
-        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.model, []);
+        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.brand, []);//最初はなし
+        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.model, []);//最初はなし
 
 
-
+        //=================
         ///Event
+        //=================
+
         let textOf = (id)=>{
             let select = document.getElementById(id);
             return select.options[select.selectedIndex].text;
         }
+
+        //選択したBrandによってModelのセレクタ内のoptionをフィルターするEvent
         Render.changeToFilterSelectorOptionByApiData(id.step1.brand,[id.step1.model, `${config.url}?type=cpu`, "Model", (cur)=> cur["Brand"] == textOf(id.step1.brand) ])
+        Render.changeToFilterSelectorOptionByApiData(id.step2.brand,[id.step2.model, `${config.url}?type=gpu`, "Model", (cur)=> cur["Brand"] == textOf(id.step2.brand) ])
+        Render.changeToFilterSelectorOptionByApiData(id.step3.brand,[id.step3.model, `${config.url}?type=ram`, "Model", (cur)=> cur["Brand"] == textOf(id.step3.brand) ])
+        Render.changeToFilterSelectorOptionByApiData(id.step4.brand,[id.step4.model, `${config.url}?type=ram`, "Model", (cur)=> cur["Brand"] == textOf(id.step4.brand) ])
+
         
         
     }
