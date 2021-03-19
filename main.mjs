@@ -244,7 +244,7 @@ class View{
         //slecter内のoptionを変更したら狙ったselectorの中身をフィルターして作り直すRenderのメソッド
         //引数は2つ！ (id,[])
         /////第一引数 : eventをlistenerさせるターゲットのid
-        /////第二引数 : eventで使う関数の引数が入った配列...今回の関数は => SelectorOptionDirector.filteredSelectorOptionByApiData(selectorId, url, dataKey,f)
+        /////第二引数 : eventで使う関数の引数が入った配列
         //第一引数と、配列のindex0..つまりフィルターされるselectorのid、のふたつに注目するといいかも。
         //あとはSelectorOptionDirectorクラスを見てもいいし、ブラックボックスとして理解してもオッケー。
         Render.changeToFilterSelectorOptionByApiData(id.step1.brand   ,[id.step1.model, `${config.url}?type=cpu`, "Model", (cur)=> isSelectedBrand(id.step1.brand, cur) ]);
@@ -255,14 +255,14 @@ class View{
         //step4
         document.getElementById(id.step4.ssdOrHdd).addEventListener("change",()=>{
 
-            SelectorOptionDirector.filteredSelectorOptionByApiData(id.step4.brand, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Brand", (cur)=> true)
-            SelectorOptionDirector.filteredSelectorOptionByApiData(id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> true)
+            SelectorOptionDirector.simpleSelectorOptionByApiData(id.step4.brand, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Brand")
+            SelectorOptionDirector.simpleSelectorOptionByApiData(id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model")
 
             SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.strage, setStrageArr());
 
             Render.changeToFilterSelectorOptionByApiData(id.step4.strage, [id.step4.brand, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Brand", (cur)=> isSelectedStrage(id.step4.strage,cur)]);
             Render.changeToFilterSelectorOptionByApiData(id.step4.strage, [id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> isSelectedStrage(id.step4.strage,cur)]);
-            Render.changeToFilterSelectorOptionByApiData(id.step4.brand, [id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> isSelectedBrand(id.step4.brand, cur) && isSelectedStrage(id.step4.strage,cur)]);
+            Render.changeToFilterSelectorOptionByApiData(id.step4.brand , [id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> isSelectedBrand(id.step4.brand, cur) && isSelectedStrage(id.step4.strage,cur)]);
 
         })
 
