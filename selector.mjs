@@ -109,28 +109,46 @@ class SelectorOptionDirector{
         new SelectorOption(selectorId,iterable).adjust().buildAtId();
 
     }
-    static simpleSelectorOptionByArrayOfObjects(selectorId, iterable, dataKey){
+    static uniqueSelectorOptionByArrayOfObjects(selectorId, iterable, dataKey){
 
-        new SelectorOption(selectorId,iterable).mapByValues((cur)=> cur[dataKey]).uniquify().adjust().buildAtId();
+        new SelectorOption(selectorId,iterable)
+            .mapByValues((cur)=> cur[dataKey])
+            .uniquify()
+            .adjust()
+            .buildAtId();
 
     }
-    static filteredSelectorOptionByArrayOfObject(selectorId, iterable, dataKey,f){
+    static filteredUniqueSelectorOptionByArrayOfObjects(selectorId, iterable, dataKey,f){
 
-        new SelectorOption(selectorId,iterable).filter(f).mapByValues((cur)=> cur[dataKey]).uniquify().adjust().buildAtId();
+        new SelectorOption(selectorId,iterable)
+            .filter(f)
+            .mapByValues((cur)=> cur[dataKey])
+            .uniquify()
+            .adjust()
+            .buildAtId();
 
+    }
+    static filteredSelectorOptionByArrayOfObjects(selectorId, iterable, dataKey,f){
+
+        new SelectorOption(selectorId,iterable)
+            .filter(f)
+            .mapByValues((cur)=> cur[dataKey])
+            .adjust()
+            .buildAtId();
+        
     }
     //非同期用
-    static simpleSelectorOptionByApiData(selectorId, url, dataKey){
+    static uniqueSelectorOptionByApiData(selectorId, url, dataKey){
         
         fetch(url).then(res => res.json())
-                .then(iterable => this.simpleSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey))
+                .then(iterable => this.uniqueSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey))
                 .catch(()=> View.alert("Failed to get data from API url"));
         
     }
-    static filteredSelectorOptionByApiData(selectorId, url, dataKey,f){
+    static filteredUniqueSelectorOptionByApiData(selectorId, url, dataKey,f){
 
         fetch(url).then(res => res.json())
-                .then(iterable => this.filteredSelectorOptionByArrayOfObject(selectorId,iterable,dataKey,f))
+                .then(iterable => this.filteredUniqueSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey,f))
                 .catch(()=> View.alert("Failed to get data from API url"));
         
     }

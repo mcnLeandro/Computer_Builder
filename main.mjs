@@ -29,14 +29,9 @@ const id = {
 
 class Render{
 
-    static changeToLeadAsyncSelectorOptionsByObjectsArray(id,argumentArr){
+    static changeToFilterUniqueSelectorOptionByApiData(id,argumentArr){
 
-        document.getElementById(id).addEventListener("change" ,()=> View.AsyncSelectorOptionsByObjectsArray(...argumentArr) )
-
-    }
-    static changeToFilterSelectorOptionByApiData(id,argumentArr){
-
-        document.getElementById(id).addEventListener("change",()=> SelectorOptionDirector.filteredSelectorOptionByApiData(...argumentArr))
+        document.getElementById(id).addEventListener("change",()=> SelectorOptionDirector.filteredUniqueSelectorOptionByApiData(...argumentArr))
 
     }
     static clickToBuildPC(id){
@@ -178,19 +173,19 @@ class View{
             </section>
 
         `
-        //============================
-        //selector内のoptionをセット
-        //============================
+        //===================================
+        //selector内のoptionをセット initialize
+        //===================================
         //テンプレートリテラル内でセットしたかったけど非同期だと無理だった。。
-        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step1.brand, `${config.url}?type=cpu`, "Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step1.model, `${config.url}?type=cpu`, "Model");
+        SelectorOptionDirector.uniqueSelectorOptionByApiData(id.step1.brand, `${config.url}?type=cpu`, "Brand");
+        SelectorOptionDirector.uniqueSelectorOptionByApiData(id.step1.model, `${config.url}?type=cpu`, "Model");
 
-        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step2.brand, `${config.url}?type=gpu`, "Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step2.model, `${config.url}?type=gpu`, "Model");
+        SelectorOptionDirector.uniqueSelectorOptionByApiData(id.step2.brand, `${config.url}?type=gpu`, "Brand");
+        SelectorOptionDirector.uniqueSelectorOptionByApiData(id.step2.model, `${config.url}?type=gpu`, "Model");
 
         SelectorOptionDirector.simpleSelectorOptionByArray(id.step3.howMany,[1,2,4,8]);
-        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step3.brand, `${config.url}?type=ram`, "Brand");
-        SelectorOptionDirector.simpleSelectorOptionByApiData(id.step3.model, `${config.url}?type=ram`, "Model");
+        SelectorOptionDirector.uniqueSelectorOptionByApiData(id.step3.brand, `${config.url}?type=ram`, "Brand");
+        SelectorOptionDirector.uniqueSelectorOptionByApiData(id.step3.model, `${config.url}?type=ram`, "Model");
 
 
         SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.ssdOrHdd, ["HDD","SSD"]);
@@ -247,26 +242,24 @@ class View{
         /////第二引数 : eventで使う関数の引数が入った配列
         //第一引数と、配列のindex0..つまりフィルターされるselectorのid、のふたつに注目するといいかも。
         //あとはSelectorOptionDirectorクラスを見てもいいし、ブラックボックスとして理解してもオッケー。
-        Render.changeToFilterSelectorOptionByApiData(id.step1.brand   ,[id.step1.model, `${config.url}?type=cpu`, "Model", (cur)=> isSelectedBrand(id.step1.brand, cur) ]);
-        Render.changeToFilterSelectorOptionByApiData(id.step2.brand   ,[id.step2.model, `${config.url}?type=gpu`, "Model", (cur)=> isSelectedBrand(id.step2.brand, cur) ]);
-        Render.changeToFilterSelectorOptionByApiData(id.step3.howMany ,[id.step3.brand, `${config.url}?type=ram`, "Brand", (cur)=> isSelectedRamStickAmount(id.step3.howMany, cur) ]);
-        Render.changeToFilterSelectorOptionByApiData(id.step3.howMany ,[id.step3.model, `${config.url}?type=ram`, "Model", (cur)=> isSelectedBrand(id.step3.brand, cur) && isSelectedRamStickAmount(id.step3.howMany, cur) ]);
-        Render.changeToFilterSelectorOptionByApiData(id.step3.brand   ,[id.step3.model, `${config.url}?type=ram`, "Model", (cur)=> isSelectedBrand(id.step3.brand, cur) && isSelectedRamStickAmount(id.step3.howMany, cur) ]);
+        Render.changeToFilterUniqueSelectorOptionByApiData(id.step1.brand   ,[id.step1.model, `${config.url}?type=cpu`, "Model", (cur)=> isSelectedBrand(id.step1.brand, cur) ]);
+        Render.changeToFilterUniqueSelectorOptionByApiData(id.step2.brand   ,[id.step2.model, `${config.url}?type=gpu`, "Model", (cur)=> isSelectedBrand(id.step2.brand, cur) ]);
+        Render.changeToFilterUniqueSelectorOptionByApiData(id.step3.howMany ,[id.step3.brand, `${config.url}?type=ram`, "Brand", (cur)=> isSelectedRamStickAmount(id.step3.howMany, cur) ]);
+        Render.changeToFilterUniqueSelectorOptionByApiData(id.step3.howMany ,[id.step3.model, `${config.url}?type=ram`, "Model", (cur)=> isSelectedBrand(id.step3.brand, cur) && isSelectedRamStickAmount(id.step3.howMany, cur) ]);
+        Render.changeToFilterUniqueSelectorOptionByApiData(id.step3.brand   ,[id.step3.model, `${config.url}?type=ram`, "Model", (cur)=> isSelectedBrand(id.step3.brand, cur) && isSelectedRamStickAmount(id.step3.howMany, cur) ]);
         //step4
         document.getElementById(id.step4.ssdOrHdd).addEventListener("change",()=>{
 
-            SelectorOptionDirector.simpleSelectorOptionByApiData(id.step4.brand, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Brand")
-            SelectorOptionDirector.simpleSelectorOptionByApiData(id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model")
+            SelectorOptionDirector.uniqueSelectorOptionByApiData(id.step4.brand, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Brand")
+            SelectorOptionDirector.uniqueSelectorOptionByApiData(id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model")
 
             SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.strage, setStrageArr());
 
-            Render.changeToFilterSelectorOptionByApiData(id.step4.strage, [id.step4.brand, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Brand", (cur)=> isSelectedStrage(id.step4.strage,cur)]);
-            Render.changeToFilterSelectorOptionByApiData(id.step4.strage, [id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> isSelectedStrage(id.step4.strage,cur)]);
-            Render.changeToFilterSelectorOptionByApiData(id.step4.brand , [id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> isSelectedBrand(id.step4.brand, cur) && isSelectedStrage(id.step4.strage,cur)]);
+            Render.changeToFilterUniqueSelectorOptionByApiData(id.step4.strage, [id.step4.brand, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Brand", (cur)=> isSelectedStrage(id.step4.strage,cur)]);
+            Render.changeToFilterUniqueSelectorOptionByApiData(id.step4.strage, [id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> isSelectedStrage(id.step4.strage,cur)]);
+            Render.changeToFilterUniqueSelectorOptionByApiData(id.step4.brand , [id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> isSelectedBrand(id.step4.brand, cur) && isSelectedStrage(id.step4.strage,cur)]);
 
         })
-
-        
 
         Render.clickToBuildPC(id.buildBtn);
 
