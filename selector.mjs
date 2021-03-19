@@ -122,12 +122,16 @@ class SelectorOptionDirector{
     //非同期用
     static simpleSelectorOptionByApiData(selectorId, url, dataKey){
         
-        fetch(url).then(res => res.json()).then(iterable => this.simpleSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey));
+        fetch(url).then(res => res.json())
+                .then(iterable => this.simpleSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey))
+                .catch(()=> View.alert("Failed to get data from API url"));
         
     }
     static filteredSelectorOptionByApiData(selectorId, url, dataKey,f){
 
-        fetch(url).then(res => res.json()).then(iterable => this.filteredSelectorOptionByArrayOfObject(selectorId,iterable,dataKey,f));
+        fetch(url).then(res => res.json())
+                .then(iterable => this.filteredSelectorOptionByArrayOfObject(selectorId,iterable,dataKey,f))
+                .catch(()=> View.alert("Failed to get data from API url"));
         
     }
 }

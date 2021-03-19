@@ -22,11 +22,13 @@ const id = {
         ssdOrHdd:"step4-hdd-or-ssd",
         strage:"step4-strage",
         brand:"step4-brand",
-        mdel:"step4-model"
-    }
+        model:"step4-model"
+    },
+    buildBtn:"build-btn"
 }
 
 class Render{
+
     static changeToLeadAsyncSelectorOptionsByObjectsArray(id,argumentArr){
 
         document.getElementById(id).addEventListener("change" ,()=> View.AsyncSelectorOptionsByObjectsArray(...argumentArr) )
@@ -37,13 +39,22 @@ class Render{
         document.getElementById(id).addEventListener("change",()=> SelectorOptionDirector.filteredSelectorOptionByApiData(...argumentArr))
 
     }
-    static changeTolog(id,f){
+    static clickToBuildPC(id){
 
-        document.getElementById(id).addEventListener("change", ()=> {
-            console.log(f(id))
+        let areFilledAll = ()=>{
+            return Array.from(document.getElementsByTagName("select"))
+                        .reduce((bool,selector) => selector.value == "-1" ? false : bool ,true);
+        } 
+
+        document.getElementById(id).addEventListener("click",()=> {
+            if(areFilledAll()){
+                //implement of build PC
+            }
+            else View.alert("danger","You have to choose everything.")
         })
 
     }
+
 }
 class ViewTemplate{
     static h2(title){
@@ -73,6 +84,22 @@ class ViewTemplate{
     }
 }
 class View{
+
+    static alert(type,message){
+
+        document.getElementById("alert").innerHTML = `
+            <div id="alert" class="alert alert-${type} alert-fade-out" role="alert">
+                ${message}
+            <div>
+        `
+
+        setTimeout(function(){
+
+            document.getElementById("alert").innerHTML = "";
+
+        },6000)
+
+    }
     static base(){
         document.getElementById("body").innerHTML = `
             <header class="p-2 d-flex justify-content-between bg-dark">
@@ -145,7 +172,7 @@ class View{
 
 
                 <div class="col-12 mt-5">
-                    <Button class="btn btn-primary ">Add PC</Button>
+                    <Button id="${id.buildBtn}" class="btn btn-primary ">Add PC</Button>
                 </div>
 
             </section>
@@ -238,6 +265,10 @@ class View{
             Render.changeToFilterSelectorOptionByApiData(id.step4.brand, [id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> isSelectedBrand(id.step4.brand, cur) && isSelectedStrage(id.step4.strage,cur)]);
 
         })
+
+        
+
+        Render.clickToBuildPC(id.buildBtn);
 
     }
 
