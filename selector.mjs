@@ -66,6 +66,13 @@ class Selector{
 
     }
 
+    static textOf(selectorId){
+
+        let select = document.getElementById(selectorId);
+        return select.options[select.selectedIndex].text;
+
+    }
+
 }
 class SelectorOption extends Selector{
 

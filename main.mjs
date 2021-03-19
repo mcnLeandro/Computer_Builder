@@ -19,7 +19,7 @@ const id = {
         model:"step3-model"
     },
     step4:{
-        sshOrHdd:"step4-hdd-or-ssd",
+        ssdOrHdd:"step4-hdd-or-ssd",
         strage:"step4-strage",
         brand:"step4-brand",
         mdel:"step4-model"
@@ -37,11 +37,12 @@ class Render{
         document.getElementById(id).addEventListener("change",()=> SelectorOptionDirector.filteredSelectorOptionByApiData(...argumentArr))
 
     }
+    static changeTolog(id,f){
 
-    static changeTolog(id){
         document.getElementById(id).addEventListener("change", ()=> {
-            // do something to debug
+            console.log(f(id))
         })
+
     }
 }
 class ViewTemplate{
@@ -130,7 +131,7 @@ class View{
                 ${ViewTemplate.h2("step4 : Select your storage")}
 
                 ${ViewTemplate.h3("HDD or SSD")}
-                ${ViewTemplate.selector(id.step4.sshOrHdd)}
+                ${ViewTemplate.selector(id.step4.ssdOrHdd)}
 
                 ${ViewTemplate.h3("Storage")}
                 ${ViewTemplate.selector(id.step4.strage)}
@@ -160,34 +161,84 @@ class View{
         SelectorOptionDirector.simpleSelectorOptionByApiData(id.step2.brand, `${config.url}?type=gpu`, "Brand");
         SelectorOptionDirector.simpleSelectorOptionByApiData(id.step2.model, `${config.url}?type=gpu`, "Model");
 
-        SelectorOptionDirector.simpleSelectorOptionByArray(id.step3.howMany,[1,2,3,4]);
+        SelectorOptionDirector.simpleSelectorOptionByArray(id.step3.howMany,[1,2,4,8]);
         SelectorOptionDirector.simpleSelectorOptionByApiData(id.step3.brand, `${config.url}?type=ram`, "Brand");
         SelectorOptionDirector.simpleSelectorOptionByApiData(id.step3.model, `${config.url}?type=ram`, "Model");
 
 
-        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.sshOrHdd, ["HHD","SSD"]);
-        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.strage, ["4TB","2TB","1TB","960GB","800GB","512GB","500GB","480GB","400GB","280GB","256GB","250GB","128GB","118GB","58GB"]);
+        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.ssdOrHdd, ["HDD","SSD"]);
+        SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.strage,[]);//最初はなし
         SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.brand, []);//最初はなし
         SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.model, []);//最初はなし
 
 
-        //=================
+        //================================================================
         ///Event
-        //=================
+        //================================================================
+        //フィルターするためのラムダ
+        let isSelectedBrand = (selectorId,obj) =>{
 
-        let textOf = (id)=>{
-            let select = document.getElementById(id);
-            return select.options[select.selectedIndex].text;
+            if(Selector.textOf(selectorId) == "Choose...") return true;
+            return obj["Brand"] == Selector.textOf(selectorId)
+
         }
+        let isSelectedRamStickAmount = (selectorId,obj) => {
 
-        //選択したBrandによってModelのセレクタ内のoptionをフィルターするEvent
-        Render.changeToFilterSelectorOptionByApiData(id.step1.brand,[id.step1.model, `${config.url}?type=cpu`, "Model", (cur)=> cur["Brand"] == textOf(id.step1.brand) ])
-        Render.changeToFilterSelectorOptionByApiData(id.step2.brand,[id.step2.model, `${config.url}?type=gpu`, "Model", (cur)=> cur["Brand"] == textOf(id.step2.brand) ])
-        Render.changeToFilterSelectorOptionByApiData(id.step3.brand,[id.step3.model, `${config.url}?type=ram`, "Model", (cur)=> cur["Brand"] == textOf(id.step3.brand) ])
-        Render.changeToFilterSelectorOptionByApiData(id.step4.brand,[id.step4.model, `${config.url}?type=ram`, "Model", (cur)=> cur["Brand"] == textOf(id.step4.brand) ])
+            if(Selector.textOf(selectorId) == "Choose...") return true;
 
-        
-        
+            let string = obj["Model"];
+            let xIndex = string.lastIndexOf("x");
+            let brankIndex = string.lastIndexOf(" ");
+            let ramStickAmount = parseInt(string.substring(brankIndex,xIndex));
+
+            return ramStickAmount == Selector.textOf(selectorId);
+            
+        }
+        let isSelectedStrage = (selectorId,obj) => {
+
+            if(Selector.textOf(selectorId) == "Choose...") return true;
+
+            let string = obj["Model"];
+
+            return string.lastIndexOf(Selector.textOf(selectorId)) != -1;
+            
+        }
+        let setStrageArr = () => {
+
+            switch(Selector.textOf(id.step4.ssdOrHdd)){
+                case "SSD": return [ "4TB" , "2TB","1TB", "960GB","800GB", "512GB", "500GB", "480GB","400GB","280GB","256GB", "250GB","128GB", "118GB", "58GB"];break;
+                case "HDD": return ["12TB", "10TB", "8TB", "6TB","5TB","4TB", "3TB", "2TB", "1.5TB","1TB", "500GB", "450GB", "250GB", "300GB"];break;
+                default: return [];break;
+            }
+
+        }
+        //選択したものによってセレクタ内のoptionをフィルターするEvent
+        //文字が横に長いだけなので「えー」ってならずにぜひ読んで欲しい！
+        //slecter内のoptionを変更したら狙ったselectorの中身をフィルターして作り直すRenderのメソッド
+        //引数は2つ！ (id,[])
+        /////第一引数 : eventをlistenerさせるターゲットのid
+        /////第二引数 : eventで使う関数の引数が入った配列...今回の関数は => SelectorOptionDirector.filteredSelectorOptionByApiData(selectorId, url, dataKey,f)
+        //第一引数と、配列のindex0..つまりフィルターされるselectorのid、のふたつに注目するといいかも。
+        //あとはSelectorOptionDirectorクラスを見てもいいし、ブラックボックスとして理解してもオッケー。
+        Render.changeToFilterSelectorOptionByApiData(id.step1.brand   ,[id.step1.model, `${config.url}?type=cpu`, "Model", (cur)=> isSelectedBrand(id.step1.brand, cur) ]);
+        Render.changeToFilterSelectorOptionByApiData(id.step2.brand   ,[id.step2.model, `${config.url}?type=gpu`, "Model", (cur)=> isSelectedBrand(id.step2.brand, cur) ]);
+        Render.changeToFilterSelectorOptionByApiData(id.step3.howMany ,[id.step3.brand, `${config.url}?type=ram`, "Brand", (cur)=> isSelectedRamStickAmount(id.step3.howMany, cur) ]);
+        Render.changeToFilterSelectorOptionByApiData(id.step3.howMany ,[id.step3.model, `${config.url}?type=ram`, "Model", (cur)=> isSelectedBrand(id.step3.brand, cur) && isSelectedRamStickAmount(id.step3.howMany, cur) ]);
+        Render.changeToFilterSelectorOptionByApiData(id.step3.brand   ,[id.step3.model, `${config.url}?type=ram`, "Model", (cur)=> isSelectedBrand(id.step3.brand, cur) && isSelectedRamStickAmount(id.step3.howMany, cur) ]);
+        //step4
+        document.getElementById(id.step4.ssdOrHdd).addEventListener("change",()=>{
+
+            SelectorOptionDirector.filteredSelectorOptionByApiData(id.step4.brand, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Brand", (cur)=> true)
+            SelectorOptionDirector.filteredSelectorOptionByApiData(id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> true)
+
+            SelectorOptionDirector.simpleSelectorOptionByArray(id.step4.strage, setStrageArr());
+
+            Render.changeToFilterSelectorOptionByApiData(id.step4.strage, [id.step4.brand, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Brand", (cur)=> isSelectedStrage(id.step4.strage,cur)]);
+            Render.changeToFilterSelectorOptionByApiData(id.step4.strage, [id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> isSelectedStrage(id.step4.strage,cur)]);
+            Render.changeToFilterSelectorOptionByApiData(id.step4.brand, [id.step4.model, `${config.url}?type=${Selector.textOf(id.step4.ssdOrHdd).toLowerCase()}`, "Model", (cur)=> isSelectedBrand(id.step4.brand, cur) && isSelectedStrage(id.step4.strage,cur)]);
+
+        })
+
     }
 
 }
