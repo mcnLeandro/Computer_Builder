@@ -140,7 +140,8 @@ class Render{
                 await searchAndSet(pc,"ram",id.step3.model);
                 await searchAndSet(pc,Selector.textOf(id.step4.ssdOrHdd).toLowerCase(),id.step4.model)
 
-                document.getElementById(id.pcInfo).innerHTML += ViewTemplate.pcInfo(pc);
+                let html = document.getElementById(id.pcInfo)
+                html.innerHTML = ViewTemplate.pcInfo(pc) + html.innerHTML;
             }
             else View.alert("danger","You have to choose all of model selector at least.")
 
@@ -183,9 +184,9 @@ class ViewTemplate{
             <div class="row mx-0 bg-info p-3 mt-3 rounded">
                             
                 <div class="col-12 col-md-6">
-                    <img src="${config.image}" alt="" width="100%">
+                    <img class="rounded" src="${config.image}" alt="" width="100%">
 
-                    <h3 class="mt-3">Work : ${pc.getWorkingBenchmark()}%</h3>
+                    <h3 class="mt-3">Working : ${pc.getWorkingBenchmark()}%</h3>
                     <h3>Gaming : ${pc.getGamingBenchmark()}%</h3>
                 </div>
 
