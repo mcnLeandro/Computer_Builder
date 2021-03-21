@@ -29,28 +29,32 @@ const id = {
 
 class Render{
 
-    static changeToUniqueSelectorOptionByApiData(id,argumentArr){
+    static changeToUniqueSelectorOptionByApiData(targetId,argumentArr){
 
-        document.getElementById(id).addEventListener("change",()=> SelectorOptionDirector.uniqueByApiData(...argumentArr))
-
-    }
-    static changeToSearchableSelectorOptionByApiData(id,argumentArr){
-
-        document.getElementById(id).addEventListener("change",()=> SelectorOptionDirector.searchableByApiData(...argumentArr))
+        document.getElementById(targetId).addEventListener("change",()=> SelectorOptionDirector.uniqueByApiData(...argumentArr))
 
     }
-    static clickToBuildPC(id){
+    static changeToSearchableSelectorOptionByApiData(targetId,argumentArr){
+
+        document.getElementById(targetId).addEventListener("change",()=> SelectorOptionDirector.searchableByApiData(...argumentArr))
+
+    }
+    static clickToBuildPC(targetId){
 
         let areFilledAll = ()=>{
-            return Array.from(document.getElementsByTagName("select"))
-                        .reduce((bool,selector) => selector.value == "-1" ? false : bool ,true);
+            return [
+                document.getElementById(id.step1.model),
+                document.getElementById(id.step2.model),
+                document.getElementById(id.step3.model),
+                document.getElementById(id.step4.model),
+            ].reduce((bool,selector) => selector.value == "-1" ? false : bool ,true);
         } 
 
-        document.getElementById(id).addEventListener("click",()=> {
+        document.getElementById(targetId).addEventListener("click",()=> {
             if(areFilledAll()){
                 //implement of build PC
             }
-            else View.alert("danger","You have to choose everything.")
+            else View.alert("danger","You have to choose all model selector.")
         })
 
     }
@@ -290,13 +294,7 @@ class View{
             );
 
         })
-        //やること
-    
-        //その後最後のPCのHTML追加
-        //計算の処理を追加してまたやることを書く。
-        //fiilの処理はModelのselectorのみに適応したい。
-        //検索の際はRankが必ずしもindexではないからModel名が一致するまでindex++。Rank == value && textOf == Model;
-        //やることが見つからなかったら完成！！
+        
         Render.clickToBuildPC(id.buildBtn);
 
     }
