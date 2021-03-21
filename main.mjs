@@ -3,7 +3,7 @@ import { SelectorOption,SelectorOptionDirector } from '/selector.mjs';
 
 const config = {
     url : "https://api.recursionist.io/builder/computers",
-    image : "conputerBuilder.png"
+    image : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCjyztNf0Tm1M720Kd0RWj6ACMWtjdYvVimg&usqp=CAU"
 }
 const id = {
     step1:{
@@ -28,7 +28,43 @@ const id = {
     buildBtn:"build-btn",
     pcInfo:"pc-info"
 }
+class PC{
 
+    cpu;
+    gpu;
+    ram;
+    strage;
+
+    constructor(){}
+
+    setCPU(cpu){
+        this.cpu = cpu;
+        console.log(this)
+    }
+    setGPU(gpu){
+        this.gpu = gpu;
+        console.log(this)
+    }
+    setRAM(ram){
+        this.ram = ram;
+        console.log(this)
+    }
+    setSTRAGE(strage){
+        this.strage = strage;
+        console.log(this)
+    }
+
+    set(part,data){
+        switch(part){
+            case "cpu":this.setCPU(data);break;
+            case "gpu":this.setGPU(data);break;
+            case "ram":this.setRAM(data);break;
+            case "ssd":this.setSTRAGE(data);break;
+            case "hdd":this.setSTRAGE(data);break;
+        }
+    }
+    
+}
 class Render{
 
     static changeToUniqueSelectorOptionByApiData(targetId,argumentArr){
@@ -41,18 +77,55 @@ class Render{
         document.getElementById(targetId).addEventListener("change",()=> SelectorOptionDirector.searchableByApiData(...argumentArr))
 
     }
-    static clickToBuildPC(targetId){
+    static  clickToBuildPC(targetId){
 
         let areFilledAll = ()=>{
-            return Array.from(document.getElementsByTagName("select")).reduce((bool,selector) => selector.value == "-1" ? false : bool ,true);
+
+            return [
+                document.getElementById(id.step1.model),
+                document.getElementById(id.step2.model),
+                document.getElementById(id.step3.model),
+                document.getElementById(id.step4.model)
+            ].reduce((bool,selector) => selector.value == "-1" ? false : bool ,true);
+
         }
+        let search = (data,value,model) => {
 
-        document.getElementById(targetId).addEventListener("click",()=> {
+            let l = data.length;
+            let index = parseInt(value)-1;
 
-            if(!areFilledAll()){
-                document.getElementById(id.pcInfo).innerHTML += ViewTemplate.pcInfo();
+            while(l > index){
+                if(value == data[index]["Rank"] && model == data[index]["Model"]) return data[index]
+                index++;
             }
-            else View.alert("danger","You have to choose everything.")
+            View.alert("danger",`Search error. There was no match. Replaced to most related to build PC.`)
+            return data[parseInt(value)-1]
+
+        }
+        let  searchAndSet = async (pc,part,selectorId) => {
+
+            let value = document.getElementById(selectorId).value;
+            let model = Selector.textOf(selectorId);
+
+            return fetch(`${config.url}?type=${part}`).then(res => res.json())
+            .then(data => pc.set(part,search(data,value,model)));
+
+        }
+        
+
+        document.getElementById(targetId).addEventListener("click",async function(){
+
+            if(areFilledAll()){
+
+                let pc = new PC();
+                await searchAndSet(pc,"cpu",id.step1.model);
+                await searchAndSet(pc,"gpu",id.step2.model);
+                await searchAndSet(pc,"ram",id.step3.model);
+                await searchAndSet(pc,Selector.textOf(id.step4.ssdOrHdd).toLowerCase(),id.step4.model)
+
+                document.getElementById(id.pcInfo).innerHTML += ViewTemplate.pcInfo(pc);
+            }
+            else View.alert("danger","You have to choose all of model selector at least.")
 
         })
 
@@ -85,7 +158,8 @@ class ViewTemplate{
             
         `
     }
-    static pcInfo(){
+    static pcInfo(pc){
+        console.log(pc)
 
         let work = 1;
         let gaming = 1;
@@ -102,23 +176,24 @@ class ViewTemplate{
 
                 <div class="col-12 col-md-6">
                     <h3 class="mt-3">CPU</h3>
-                    <p>brand : ${Selector.textOf(id.step1.brand)}</p>
-                    <p>model : ${Selector.textOf(id.step1.model)}</p>
+                    <p>brand : ${pc["cpu"]["Brand"]}</p>
+                    <p>model : ${pc["cpu"]["Model"]}</p>
                     <h3>GPU</h3>
-                    <p>brand : ${Selector.textOf(id.step2.brand)}</p>
-                    <p>model : ${Selector.textOf(id.step2.model)}</p>
+                    <p>brand : ${pc["gpu"]["Brand"]}</p>
+                    <p>model : ${pc["gpu"]["Model"]}</p>
                     <h3>RAM</h3>
-                    <p>brand : ${Selector.textOf(id.step3.brand)}</p>
-                    <p>model : ${Selector.textOf(id.step3.model)}</p>
+                    <p>brand : ${pc["ram"]["Brand"]}</p>
+                    <p>model : ${pc["ram"]["Model"]}</p>
                     <h3>Strage</h3>
-                    <p>type : ${Selector.textOf(id.step4.ssdOrHdd)}</p>
-                    <p>brand : ${Selector.textOf(id.step4.brand)}</p>
-                    <p>model : ${Selector.textOf(id.step4.model)}</p>
+                    <p>type : ${pc["strage"]["Type"]}</p>
+                    <p>brand : ${pc["strage"]["Brand"]}</p>
+                    <p>model : ${pc["strage"]["Model"]}</p>
                 </div>
 
             </div>
         `
     }
+
 }
 class View{
 
@@ -331,7 +406,7 @@ class View{
             );
 
         })
-        
+
         Render.clickToBuildPC(id.buildBtn);
 
     }
