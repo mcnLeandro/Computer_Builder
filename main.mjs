@@ -2,7 +2,8 @@ import { Selector,SelectorDirector } from '/selector.mjs';
 import { SelectorOption,SelectorOptionDirector } from '/selector.mjs';
 
 const config = {
-    url : "https://api.recursionist.io/builder/computers"
+    url : "https://api.recursionist.io/builder/computers",
+    image : "conputerBuilder.png"
 }
 const id = {
     step1:{
@@ -24,7 +25,8 @@ const id = {
         brand:"step4-brand",
         model:"step4-model"
     },
-    buildBtn:"build-btn"
+    buildBtn:"build-btn",
+    pcInfo:"pc-info"
 }
 
 class Render{
@@ -42,19 +44,16 @@ class Render{
     static clickToBuildPC(targetId){
 
         let areFilledAll = ()=>{
-            return [
-                document.getElementById(id.step1.model),
-                document.getElementById(id.step2.model),
-                document.getElementById(id.step3.model),
-                document.getElementById(id.step4.model),
-            ].reduce((bool,selector) => selector.value == "-1" ? false : bool ,true);
-        } 
+            return Array.from(document.getElementsByTagName("select")).reduce((bool,selector) => selector.value == "-1" ? false : bool ,true);
+        }
 
         document.getElementById(targetId).addEventListener("click",()=> {
-            if(areFilledAll()){
-                //implement of build PC
+
+            if(!areFilledAll()){
+                document.getElementById(id.pcInfo).innerHTML += ViewTemplate.pcInfo();
             }
-            else View.alert("danger","You have to choose all model selector.")
+            else View.alert("danger","You have to choose everything.")
+
         })
 
     }
@@ -84,6 +83,40 @@ class ViewTemplate{
                 </select>
             </div>
             
+        `
+    }
+    static pcInfo(){
+
+        let work = 1;
+        let gaming = 1;
+
+        return`
+            <div class="row mx-0 bg-info p-3 mt-3 rounded">
+                            
+                <div class="col-12 col-md-6">
+                    <img src="${config.image}" alt="" width="100%">
+
+                    <h3 class="mt-3">Work : ${work}%</h3>
+                    <h3>Gaming : ${gaming}%</h3>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <h3 class="mt-3">CPU</h3>
+                    <p>brand : ${Selector.textOf(id.step1.brand)}</p>
+                    <p>model : ${Selector.textOf(id.step1.model)}</p>
+                    <h3>GPU</h3>
+                    <p>brand : ${Selector.textOf(id.step2.brand)}</p>
+                    <p>model : ${Selector.textOf(id.step2.model)}</p>
+                    <h3>RAM</h3>
+                    <p>brand : ${Selector.textOf(id.step3.brand)}</p>
+                    <p>model : ${Selector.textOf(id.step3.model)}</p>
+                    <h3>Strage</h3>
+                    <p>type : ${Selector.textOf(id.step4.ssdOrHdd)}</p>
+                    <p>brand : ${Selector.textOf(id.step4.brand)}</p>
+                    <p>model : ${Selector.textOf(id.step4.model)}</p>
+                </div>
+
+            </div>
         `
     }
 }
@@ -177,6 +210,10 @@ class View{
 
                 <div class="col-12 mt-5">
                     <Button id="${id.buildBtn}" class="btn btn-primary ">Add PC</Button>
+                </div>
+
+                <div id="${id.pcInfo}" class="col-12 my-5 ">
+                    
                 </div>
 
             </section>
