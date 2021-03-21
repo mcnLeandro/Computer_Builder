@@ -63,6 +63,23 @@ class PC{
             case "hdd":this.setSTRAGE(data);break;
         }
     }
+
+    getGamingBenchmark(){
+        let benchMark = 0;
+        benchMark +=  this.cpu["Benchmark"] * .25;
+        benchMark +=  this.gpu["Benchmark"] * .6;
+        benchMark +=  this.ram["Benchmark"] * .12;
+        benchMark +=  this.strage["Benchmark"] * .1;
+        return Math.floor(benchMark);
+    }
+    getWorkingBenchmark(){
+        let benchMark = 0;
+        benchMark +=  this.cpu["Benchmark"] * .6;
+        benchMark +=  this.gpu["Benchmark"] * .25;
+        benchMark +=  this.ram["Benchmark"] * .1;
+        benchMark +=  this.strage["Benchmark"] * .05;
+        return Math.floor(benchMark);
+    }
     
 }
 class Render{
@@ -159,10 +176,8 @@ class ViewTemplate{
         `
     }
     static pcInfo(pc){
-        console.log(pc)
 
-        let work = 1;
-        let gaming = 1;
+        console.log(pc);
 
         return`
             <div class="row mx-0 bg-info p-3 mt-3 rounded">
@@ -170,8 +185,8 @@ class ViewTemplate{
                 <div class="col-12 col-md-6">
                     <img src="${config.image}" alt="" width="100%">
 
-                    <h3 class="mt-3">Work : ${work}%</h3>
-                    <h3>Gaming : ${gaming}%</h3>
+                    <h3 class="mt-3">Work : ${pc.getWorkingBenchmark()}%</h3>
+                    <h3>Gaming : ${pc.getGamingBenchmark()}%</h3>
                 </div>
 
                 <div class="col-12 col-md-6">
