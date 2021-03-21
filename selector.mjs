@@ -1,3 +1,5 @@
+import { View } from '/main.mjs';
+
 //HTMLのselectorをbuildする構造体！
 //今回は本領発揮しないけどproject2のBattery finder programでめっちゃ使えそう。
 //計算量は良くないと思う。場合による。
@@ -18,6 +20,7 @@ class Selector{
     //iterable( <E> => <E> )
     //f(cur,idx,src)
     filter(f){
+        console.log(this.iterable)
         this.iterable = this.iterable.filter(f);
         return this;
     }
@@ -43,8 +46,8 @@ class Selector{
     adjust(dataKey,valueKey){
         switch(arguments.length){
             case 0: this.iterable = this.iterable.map((cur,idx) => [idx,cur]);break;
-            case 1: Object.keys(this.iterable).map((key,idx) => [ idx , this.iterable[key][dataKey] ]); break;
-            case 2: Object.keys(this.iterable).map(key => [this.iterable[key][valueKey],this.iterable[key][dataKey]]); break;
+            case 1: this.iterable = Object.keys(this.iterable).map((key,idx) => [ idx , this.iterable[key][dataKey] ]); break;
+            case 2: this.iterable = Object.keys(this.iterable).map(key => [this.iterable[key][valueKey],this.iterable[key][dataKey]]); break;
         }
         return this;
     }
@@ -90,7 +93,7 @@ class SelectorOption extends Selector{
 }
 class SelectorDirector{
 
-    static simpleSelectorByArrayOfObjects(selectorId, iterable, dataKey){
+    static simpleByArrayOfObjects(selectorId, iterable, dataKey){
 
         return new SelectorOption(selectorId,iterable).mapByValues((cur)=> cur[dataKey]).uniquify().adjust().build();
 
@@ -98,59 +101,85 @@ class SelectorDirector{
     //非同期用
     static simpleSelectorByApiData(selectorId, url, dataKey){
 
-        fetch(url).then(res => res.json()).then(iterable => this.simpleSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey));
+        fetch(url).then(res => res.json()).then(iterable => this.simpleByArrayOfObjects(selectorId,iterable,dataKey));
 
     }
 }
 class SelectorOptionDirector{
     
-    static simpleSelectorOptionByArray(selectorId, iterable){
+    static simpleByArray(selectorId, iterable){
 
         new SelectorOption(selectorId,iterable).adjust().buildAtId();
 
     }
-    static uniqueSelectorOptionByArrayOfObjects(selectorId, iterable, dataKey){
+    static uniqueByArrayOfObjects(selectorId, iterable, dataKey){
 
         new SelectorOption(selectorId,iterable)
-            .mapByValues((cur)=> cur[dataKey])
+            .mapByValues(cur=> cur[dataKey])
             .uniquify()
             .adjust()
             .buildAtId();
 
     }
-    static filteredUniqueSelectorOptionByArrayOfObjects(selectorId, iterable, dataKey,f){
+    static filteredUniqueByArrayOfObjects(selectorId, iterable, dataKey,f){
 
         new SelectorOption(selectorId,iterable)
             .filter(f)
-            .mapByValues((cur)=> cur[dataKey])
+            .mapByValues(cur=> cur[dataKey])
             .uniquify()
             .adjust()
             .buildAtId();
 
     }
-    static filteredSelectorOptionByArrayOfObjects(selectorId, iterable, dataKey,f){
+    static searchableByArrayOfObjects(selectorId, iterable, dataKey,valueKey){
+
+        new SelectorOption(selectorId,iterable)
+            .adjust(dataKey,valueKey)
+            .buildAtId();
+
+    }
+    static filteredSearchableByArrayOfObjects(selectorId, iterable, dataKey,valueKey,f){
 
         new SelectorOption(selectorId,iterable)
             .filter(f)
-            .mapByValues((cur)=> cur[dataKey])
-            .adjust()
+            .adjust(dataKey,valueKey)
             .buildAtId();
         
     }
-    //非同期用
-    static uniqueSelectorOptionByApiData(selectorId, url, dataKey){
+
+    //非同期用 上のメソッドをそれぞれ呼び出してるだけ
+    static simpleByApiData(selectorId, url, dataKey){
+        fetch(url).then(res => res.json())
+                .then(iterable => this.simpleByArray(selectorId,iterable,dataKey))
+                .catch(()=> View.alert("danger",`Failed to get data from API url. The Selector\`s id is ${selectorId}`));
+    }
+    static uniqueByApiData(selectorId, url, dataKey){
         
         fetch(url).then(res => res.json())
-                .then(iterable => this.uniqueSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey))
-                .catch(()=> View.alert("Failed to get data from API url"));
+                .then(iterable => this.uniqueByArrayOfObjects(selectorId,iterable,dataKey))
+                .catch(()=> View.alert("danger",`Failed to get data from API url. The Selector\`s id is ${selectorId}`));
         
     }
-    static filteredUniqueSelectorOptionByApiData(selectorId, url, dataKey,f){
+    static filteredUniqueByApiData(selectorId, url, dataKey,f){
 
         fetch(url).then(res => res.json())
-                .then(iterable => this.filteredUniqueSelectorOptionByArrayOfObjects(selectorId,iterable,dataKey,f))
-                .catch(()=> View.alert("Failed to get data from API url"));
+                .then(iterable => this.filteredUniqueByArrayOfObjects(selectorId,iterable,dataKey,f))
+                .catch(()=> View.alert("danger",`Failed to get data from API url. The Selector\`s id is ${selectorId}`));
         
+    }
+    static searchableByApiData(selectorId, url, dataKey,valueKey){
+
+        fetch(url).then(res => res.json())
+                .then(iterable => this.searchableByArrayOfObjects(selectorId,iterable,dataKey,valueKey,f))
+                .catch(()=> View.alert("danger",`Failed to get data from API url. The Selector\`s id is ${selectorId}`));
+
+    }
+    static filteredSearchableByApiData(selectorId, url, dataKey,valueKey,f){
+
+        fetch(url).then(res => res.json())
+                .then(iterable => this.filteredSearchableByArrayOfObjects(selectorId,iterable,dataKey,valueKey,f))
+                .catch(()=> View.alert("danger",`Failed to get data from API url. The Selector\`s id is ${selectorId}`));
+
     }
 }
 
